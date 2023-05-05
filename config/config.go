@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"khopipah_mini_project/models"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -44,4 +45,8 @@ func InitDB() {
 		panic(err)
 	}
 	InitMigrate()
+}
+
+func InitMigrate() {
+	DB.AutoMigrate(&models.User{})
 }
