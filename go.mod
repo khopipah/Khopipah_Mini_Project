@@ -1,4 +1,4 @@
-module khopipah_mini_project
+module Khopipah_Mini_Project-1
 
 go 1.20
 
