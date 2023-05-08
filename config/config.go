@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"khopipah_mini_project/models"
+	"khopipah_mini_project-1/models"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -48,5 +48,5 @@ func InitDB() {
 }
 
 func InitMigrate() {
-	DB.AutoMigrate(&models.User{})
+	DB.AutoMigrate(&models.User{}, &models.Docter{}, &models.Pasien{}, &models.Room{})
 }
