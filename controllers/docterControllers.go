@@ -7,89 +7,86 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
-func GetUserControllers(c echo.Context) error {
-	users, e := database.GetUsers()
+func GetDocterControllers(c echo.Context) error {
+	docters, e := database.GetDocters()
 
 	if e != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, e.Error())
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "success get all users",
-		"users":   users,
+		"message": "success get all docters",
+		"docters": docters,
 	})
 }
 
-func GetUserController(c echo.Context) error {
+func GetDocterController(c echo.Context) error {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 32)
-	user, err := database.GetUser(uint(id))
+	docter, err := database.GetDocter(uint(id))
 
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "succes",
-		"users":   user,
+		"docters": docter,
 	})
 
 }
 
-func CreateUserController(c echo.Context) error {
-	user := models.User{}
-	c.Bind(&user)
-
-	if err := usecase.CreateUser(&user); err != nil {
+func CreateDocterController(c echo.Context) error {
+	docter := models.Docter{}
+	c.Bind(&docter)
+	if err := usecase.CreateDocter(&docter); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message":          "Error Create user",
+			"message":          "Error Create docter",
 			"errorDescription": err,
 		})
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "success Create New users",
-		"users":   user,
+		"message": "success Create New docters",
+		"docters": docter,
 	})
 }
 
-func DeleteUserControllers(c echo.Context) error {
+func DeleteDocterController(c echo.Context) error {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 32)
 
-	if err := usecase.DeleteUser(uint(id)); err != nil {
+	if err := usecase.DeleteDocter(uint(id)); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message":          "Error elete user",
+			"message":          "Error elete docter",
 			"errorDescription": err,
-			"errorMessage":     "Mohon maaf user tidak dapat dihapus",
+			"errorMessage":     "Mohon maaf docter tidak dapat dihapus",
 		})
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "succes Delete users",
+		"message": "succes Delete docters",
 	})
 }
 
-func UpdateUserController(c echo.Context) error {
+func UpdateDocterController(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	//id, _ := strconv.ParseUint(c.Param("id"), 10, 32)
-	user, err := database.GetUser(uint(id))
-	//user := models.User{}
+	docter, err := database.GetDocter(uint(id))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	c.Bind(&user)
+	c.Bind(&docter)
 
-	if err := usecase.UpdateUser(&user); err != nil {
+	if err := usecase.UpdateDocter(&docter); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message":          "Error Create user",
+			"message":          "Error Create docter",
 			"errorDescription": err,
-			"errorMessage":     "Mohon maaf user tidak dapat diubah",
+			"errorMessage":     "Mohon maaf docter tidak dapat diubah",
 		})
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "success update user",
-		"user":    user,
+		"message": "success update docter",
+		"docter":  docter,
 	})
 }
