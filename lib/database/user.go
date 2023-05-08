@@ -1,8 +1,8 @@
 package database
 
 import (
-	"khopipah_mini_project/config"
-	"khopipah_mini_project/models"
+	"khopipah_mini_project-1/config"
+	"khopipah_mini_project-1/models"
 )
 
 func CreateUser(user *models.User) error {
