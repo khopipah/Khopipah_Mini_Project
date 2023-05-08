@@ -3,8 +3,8 @@ package usecase
 import (
 	"errors"
 	"fmt"
-	"khopipah_mini_project/lib/database"
-	"khopipah_mini_project/models"
+	"khopipah_mini_project-1/lib/database"
+	"khopipah_mini_project-1/models"
 )
 
 func CreateUser(user *models.User) error {
