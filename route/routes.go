@@ -1,7 +1,7 @@
 package route
 
 import (
-	"mini_project/controller"
+	"khopipah_mini_project/controller"
 	"net/http"
 
 	"github.com/go-playground/validator"
