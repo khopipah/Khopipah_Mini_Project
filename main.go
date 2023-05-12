@@ -1,15 +1,19 @@
 package main
 
 import (
-	"khopipah_mini_project-1/config"
-	//m "khopipah_mini_project_structure/middlewares"
-	"khopipah_mini_project-1/routes"
+	"khopipah_mini_project/config"
+	"khopipah_mini_project/middleware"
+	"khopipah_mini_project/route"
+
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	config.InitDB()
-	e := routes.New()
-	//m.LogMiddlewares(e)
+	db := config.InitDB()
+	e := echo.New()
+	middleware.Logmiddleware(e)
 
-	e.Logger.Fatal(e.Start(":8000"))
+	route.NewRoute(e, db)
+
+	e.Logger.Fatal(e.Start(":8080"))
 }
