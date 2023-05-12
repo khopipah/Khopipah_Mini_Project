@@ -1,51 +1,82 @@
 package usecase
 
 import (
-	"errors"
 	"fmt"
-	"khopipah_mini_project-1/lib/database"
-	"khopipah_mini_project-1/models"
+	"khopipah_mini_project/middleware"
+	"khopipah_mini_project/model"
+	"khopipah_mini_project/model/payload"
+	"khopipah_mini_project/repository/database"
 )
 
-func CreateUser(user *models.User) error {
-	// check name cannot be empty
-	if user.Name == "" {
-		return errors.New("user name cannot be empty")
-	}
-
-	//check email
-	if user.Email == "" {
-		return errors.New("user Email cannot be empty")
-	}
-
-	err := database.CreateUser(user)
+func LoginUser(user *model.User) (err error) {
+	// check to db email and password
+	err = database.LoginUser(user)
 	if err != nil {
-		return err
+		fmt.Println("GetUser: Error getting user from database")
+		return
 	}
-	return nil
+	// generate jwt
+	token, err := middleware.CreateToken(int(user.ID))
+	if err != nil {
+		fmt.Println("GetUser: Error Generate token")
+		return
+	}
+	user.Token = token
+	return
 }
 
-func GetUser(id uint) (user models.User, err error) {
-	user, err = database.GetUser(id)
+func CreateUser(req *payload.CreateUserRequest) (resp payload.CreateUserResponse, err error) {
+	newUser := &model.User{
+		Name:     req.Name,
+		Email:    req.Email,
+		Password: req.Password,
+	}
+	err = database.CreateUser(newUser)
 	if err != nil {
-		fmt.Println("Error getting user from database")
+		return
+	}
+	// generate jwt
+	token, err := middleware.CreateToken(int(newUser.ID))
+	if err != nil {
+		fmt.Println("GetUser: Error Generate token")
+		return
+	}
+	newUser.Token = token
+	err = database.UpdateUser(newUser)
+	if err != nil {
+		fmt.Println("UpdateUser: Error Update user")
+		return
+	}
+	resp = payload.CreateUserResponse{
+		UserID: newUser.ID,
+		Token:  newUser.Token,
+	}
+	return
+}
+
+func GetUser(id uint) (user model.User, err error) {
+	user.ID = id
+	err = database.GetUser(&user)
+	if err != nil {
+		fmt.Println("GetUser: Error getting user from database")
 		return
 	}
 	return
 }
 
-func GetListUsers() (users []models.User, err error) {
+func GetListUsers() (users []model.User, err error) {
+	users, err = database.GetUsers()
 	if err != nil {
-		fmt.Println("GetListUser : Error getting user from database")
+		fmt.Println("GetListUsers: Error getting users from database")
 		return
 	}
 	return
 }
 
-func UpdateUser(user *models.User) (err error) {
+func UpdateUser(user *model.User) (err error) {
 	err = database.UpdateUser(user)
 	if err != nil {
-		fmt.Println("UpdateUser : Error Updating User")
+		fmt.Println("UpdateUser : Error updating user, err: ", err)
 		return
 	}
 
@@ -53,11 +84,11 @@ func UpdateUser(user *models.User) (err error) {
 }
 
 func DeleteUser(id uint) (err error) {
-	user := models.User{}
+	user := model.User{}
 	user.ID = id
 	err = database.DeleteUser(&user)
 	if err != nil {
-		fmt.Println("DeleteUser : error deleting user, err ", err)
+		fmt.Println("DeleteUser : error deleting user, err: ", err)
 		return
 	}
 

@@ -3,49 +3,62 @@ package usecase
 import (
 	"errors"
 	"fmt"
-	"khopipah_mini_project-1/lib/database"
-	"khopipah_mini_project-1/models"
+	"khopipah_mini_project/model"
+	"khopipah_mini_project/repository/database"
 )
 
-func CreatePasien(pasien *models.Pasien) error {
+func CreatePasien(pasien *model.Pasien) error {
+
 	// check name cannot be empty
 	if pasien.Name == "" {
 		return errors.New("pasien name cannot be empty")
 	}
 
-	//check penyakit
-	if pasien.Penyakit == "" {
-		return errors.New("pasien penyakit cannot be empty")
+	// check gender
+	if pasien.Gender == "" {
+		return errors.New("pasien gender cannot be empty")
+	}
+
+	// check Alamat
+	if pasien.Alamat == "" {
+		return errors.New("pasien Alamat cannot be empty")
+	}
+
+	// check telp
+	if pasien.Telp == "" {
+		return errors.New("pasien telp cannot be empty")
 	}
 
 	err := database.CreatePasien(pasien)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
-func GetPasien(id uint) (pasien models.Pasien, err error) {
+func GetPasien(id uint) (pasien model.Pasien, err error) {
 	pasien, err = database.GetPasien(id)
 	if err != nil {
-		fmt.Println("Error getting pasien from database")
+		fmt.Println("GetPasien: Error getting docter from database")
 		return
 	}
 	return
 }
 
-func GetListPasien() (pasien []models.Pasien, err error) {
+func GetListPasiens() (pasiens []model.Pasien, err error) {
+	pasiens, err = database.GetPasiens()
 	if err != nil {
-		fmt.Println("GetListPasien : Error getting user from database")
+		fmt.Println("GetListPasiens: Error getting pasiens from database")
 		return
 	}
 	return
 }
 
-func UpdatePasien(pasien *models.Pasien) (err error) {
+func UpdatePasien(pasien *model.Pasien) (err error) {
 	err = database.UpdatePasien(pasien)
 	if err != nil {
-		fmt.Println("UpdatePasien : Error Updating pasien")
+		fmt.Println("UpdatePasien : Error updating pasien, err: ", err)
 		return
 	}
 
@@ -53,11 +66,11 @@ func UpdatePasien(pasien *models.Pasien) (err error) {
 }
 
 func DeletePasien(id uint) (err error) {
-	Pasien := models.Pasien{}
-	Pasien.ID = id
-	err = database.DeletePasien(&Pasien)
+	pasien := model.Pasien{}
+	pasien.ID = id
+	err = database.DeletePasien(&pasien)
 	if err != nil {
-		fmt.Println("DeletePasien : error deleting pasien, err ", err)
+		fmt.Println("DeletePasien : error deleting pasien, err: ", err)
 		return
 	}
 

@@ -3,49 +3,57 @@ package usecase
 import (
 	"errors"
 	"fmt"
-	"khopipah_mini_project-1/lib/database"
-	"khopipah_mini_project-1/models"
+	"khopipah_mini_project/model"
+	"khopipah_mini_project/repository/database"
 )
 
-func CreateRoom(room *models.Room) error {
+func CreateRoom(room *model.Room) error {
+
 	// check name cannot be empty
 	if room.Name == "" {
 		return errors.New("room name cannot be empty")
 	}
 
-	//check Class
+	// check class
 	if room.Class == "" {
 		return errors.New("room class cannot be empty")
+	}
+
+	// check no
+	if room.No == "" {
+		return errors.New("room no cannot be empty")
 	}
 
 	err := database.CreateRoom(room)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
-func GetRoom(id uint) (room models.Room, err error) {
+func GetRoom(id uint) (room model.Room, err error) {
 	room, err = database.GetRoom(id)
 	if err != nil {
-		fmt.Println("Error getting room from database")
+		fmt.Println("GetRoom: Error getting room from database")
 		return
 	}
 	return
 }
 
-func GetListRooms() (rooms []models.Room, err error) {
+func GetListRooms() (rooms []model.Room, err error) {
+	rooms, err = database.GetRooms()
 	if err != nil {
-		fmt.Println("GetListRoom : Error getting user from database")
+		fmt.Println("GetListRooms: Error getting rooms from database")
 		return
 	}
 	return
 }
 
-func UpdateRoom(room *models.Room) (err error) {
+func UpdateRoom(room *model.Room) (err error) {
 	err = database.UpdateRoom(room)
 	if err != nil {
-		fmt.Println("UpdateRoom : Error Updating Room")
+		fmt.Println("UpdateRoom : Error updating room, err: ", err)
 		return
 	}
 
@@ -53,11 +61,11 @@ func UpdateRoom(room *models.Room) (err error) {
 }
 
 func DeleteRoom(id uint) (err error) {
-	room := models.Room{}
+	room := model.Room{}
 	room.ID = id
 	err = database.DeleteRoom(&room)
 	if err != nil {
-		fmt.Println("DeleteRoom : error deleting room, err ", err)
+		fmt.Println("DeleteRoom : error deleting room, err: ", err)
 		return
 	}
 
